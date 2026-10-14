@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Portable checks: manifest shape, shell syntax, config parsing, first-run
+# config creation. Needs bash, python3 and node; writes only to a temp dir.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+echo "manifest"
+python3 -I - <<'PY'
+import json, pathlib, sys
+
+manifest = json.loads(pathlib.Path("manifest.json").read_text())
+for key in ("schemaVersion", "id", "name", "version", "author", "license", "kinds", "entryPoints"):
+    if key not in manifest:
+        sys.exit(f"manifest.json: missing {key}")
+for kind, key in (("overlay", "overlay"), ("bar-widget", "barWidget")):
+    if kind not in manifest["kinds"]:
+        sys.exit(f"manifest.json: kinds must include {kind}")
+    if not pathlib.Path(manifest["entryPoints"].get(key, "")).is_file():
+        sys.exit(f"manifest.json: {key} entry point not found")
+PY
+
+echo "shell syntax"
+for script in ensure-config.sh tests/run; do
+  bash -n "$script"
+done
+
+echo "config parsing"
+node tests/model.test.js
+
+echo "first-run config"
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+path=$(XDG_CONFIG_HOME="$tmp" ./ensure-config.sh)
+[[ $path == "$tmp/lightning/lightning.conf" && -f $path ]] || { echo "config not created"; exit 1; }
+echo "keep = me" >>"$path"
+XDG_CONFIG_HOME="$tmp" ./ensure-config.sh >/dev/null
+grep -q "keep = me" "$path" || { echo "existing config was overwritten"; exit 1; }
+
+echo "ok"

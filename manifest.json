@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "anavarre.lightning",
+  "name": "Lightning",
+  "version": "1.0.0",
+  "author": "Aurelien Navarre",
+  "license": "MIT",
+  "description": "A keyword launcher: type a trigger to open its URL in the browser.",
+  "kinds": [
+    "overlay",
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "overlay": "Lightning.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Lightning",
+    "description": "Opens the Lightning keyword launcher",
+    "category": "Productivity",
+    "aliases": [
+      "launcher",
+      "bookmarks",
+      "url"
+    ],
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
