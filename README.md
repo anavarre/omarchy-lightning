@@ -1,8 +1,11 @@
-# Lightning
+# Omarchy Lightning
+
+![Lightning when invoked via the menu bar](preview.png)
 
 A keyword launcher for the Omarchy shell. Summon it, type a trigger, press
-Enter: its URL opens in your default browser. Add `{}` to a URL and the text
-you type after the trigger is filled in, so `jira ABC-123` opens that ticket.
+Enter: its URL opens in your default browser. Add `{}` or `%s` to a URL and
+the text you type after the trigger is filled in, e.g. `lg 123` to open
+your Github PR #123 for the Lightning project.
 
 ## Requirements
 
@@ -10,35 +13,39 @@ you type after the trigger is filled in, so `jira ABC-123` opens that ticket.
 - `omarchy-launch-browser` and `omarchy-launch-editor` (part of Omarchy)
 - For the tests only: `bash`, `python3`, `node`
 
-## Install
+## Easy install
+
+Install from the Omarchy Marketplace.
 
 ```sh
-cp -r . ~/.config/omarchy/plugins/anavarre.lightning
-omarchy-shell shell rescanPlugins
+omarchy plugin add https://github.com/anavarre/omarchy-miniflux.git --enable
+```
+```
+```
+```
+
+## Manual Install
+
+```sh
+git clone https://github.com/anavarre/lightning ~/.config/omarchy/plugins/anavarre.lightning
+omarchy plugin validate ~/.config/omarchy/plugins/anavarre.lightning
 omarchy plugin enable anavarre.lightning
+omarchy-shell shell rescanPlugins
 ```
 
 ### Update
 
-Copy over the installed folder **without deleting it first**:
-
 ```sh
-cp -r . ~/.config/omarchy/plugins/anavarre.lightning
+git -C ~/.config/omarchy/plugins/anavarre.lightning pull
 omarchy-restart-shell
 ```
-
-Deleting the folder, even briefly, counts as an uninstall: the shell disables
-Lightning and drops it from the bar. If that happens, `omarchy plugin enable
-anavarre.lightning` turns it back on (the bar icon comes back on the right).
-`omarchy-restart-shell` is the reload that always picks up new code.
 
 ### Hotkey
 
 Add to `~/.config/hypr/bindings.lua`:
-
 ```lua
-o.bind("SUPER + SEMICOLON", "Lightning", "omarchy-shell shell toggle anavarre.lightning")
-```
+
+o.bind("CTRL + ALT + SPACE", "Lightning", "omarchy-shell shell summon anavarre.lightning")
 
 Any key works; the command is the part that matters. It also works from a
 script or another tool: `omarchy-shell shell toggle anavarre.lightning`.
@@ -140,8 +147,8 @@ outside the card closes the launcher.
 ## Remove
 
 ```sh
-omarchy plugin remove anavarre.lightning
-rm -r ~/.config/lightning   # optional: your entries
+omarchy plugin disable anavarre.lightning
+rm -rf ~/.config/omarchy/plugins/anavarre.lightning ~/.config/lightning
 ```
 
 Also remove the hotkey from `bindings.lua`.
