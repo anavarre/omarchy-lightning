@@ -20,9 +20,6 @@ Install from the Omarchy Marketplace.
 ```sh
 omarchy plugin add https://github.com/anavarre/omarchy-miniflux.git --enable
 ```
-```
-```
-```
 
 ## Manual Install
 
